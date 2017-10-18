@@ -12,6 +12,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import is.timesheet.WorkstationLockListening;
+
 /**
  * The Class Assistant.
  */
@@ -37,6 +39,9 @@ public class AssistantGUI extends JFrame {
 
 	/** The current task label. */
 	private JLabel currentTaskLabel;
+
+	/** The lock listener. */
+	private WorkstationLockListening lockListener;
 	
 	/**
 	 * Instantiates a new assistant.
@@ -65,6 +70,9 @@ public class AssistantGUI extends JFrame {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if(e.getKeyCode() == KeyEvent.VK_ENTER ) {
+					if(currentTask != null) {
+						lockListener.beforeCurrentTaskChange();
+					}
 					currentTask = currentTaskField.getText();
 					currentTaskLabel.setText("  Current Task : " + currentTask);
 				}
@@ -101,5 +109,15 @@ public class AssistantGUI extends JFrame {
 	 */
 	public String getCurrentTask() {
 		return this.currentTask;
+	}
+
+	
+	/**
+	 * Sets the lock listener.
+	 *
+	 * @param workstationLockListening the new lock listener
+	 */
+	public void setLockListener(WorkstationLockListening workstationLockListening) {
+		this.lockListener = workstationLockListening;
 	}
 }

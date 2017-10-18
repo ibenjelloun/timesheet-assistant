@@ -47,6 +47,7 @@ public class WorkstationLockListening implements WindowProc
     public WorkstationLockListening(AssistantGUI assistant, TimesheetWriter writer) throws IOException
     {
     	this.assistant = assistant;
+    	this.assistant.setLockListener(this);
     	this.writer = writer;
     	
         // define new window class
@@ -180,7 +181,19 @@ public class WorkstationLockListening implements WindowProc
         
         this.currentPeriod.reset();
     }
-
+    
+    
+    /**
+     * On current task change.
+     */
+    public void beforeCurrentTaskChange() {
+    	this.currentPeriod.setType(Period.PeriodType.WORK);
+        
+        handlePeriodLog();
+        
+        this.currentPeriod.reset();
+    }
+    
 	/**
 	 * Handle period log.
 	 */
