@@ -21,6 +21,7 @@ import com.sun.jna.platform.win32.Wtsapi32;
 
 import is.timesheet.assistant.Assistant;
 import is.timesheet.assistant.data.Period;
+import is.timesheet.assistant.data.TimesheetWriter;
 
 /**
  * Code got from a stackoverflow thread :
@@ -34,18 +35,18 @@ public class WorkstationLockListening implements WindowProc
 	
 	private Assistant assistant;
 
-	private BufferedWriter timeSheetWriter;
+	private TimesheetWriter writer;
 
     /**
      * Instantiates a new win32 window test.
      * @param assistant 
-     * @param outPutFile 
+     * @param writer 
      * @throws IOException 
      */
-    public WorkstationLockListening(Assistant assistant, File outPutFile) throws IOException
+    public WorkstationLockListening(Assistant assistant, TimesheetWriter writer) throws IOException
     {
     	this.assistant = assistant;
-    	this.timeSheetWriter = new BufferedWriter(new FileWriter(outPutFile));
+    	this.writer = writer;
     	
         // define new window class
         final WString windowClass = new WString("MyWindowClass");
@@ -156,17 +157,10 @@ public class WorkstationLockListening implements WindowProc
     protected void onMachineLocked(int sessionId)
     {
         System.out.println("Machine locked right now!");
-        this.currentPeriod.initEnd();
-        this.currentPeriod.initDuration();
         this.currentPeriod.setType(Period.PeriodType.WORK);
-        this.currentPeriod.setCurrentTask(this.assistant.getCurrentTask());
-        System.out.println(this.currentPeriod);
-        this.assistant.log(this.currentPeriod);
-        try {
-			this.timeSheetWriter.write(this.currentPeriod.toString());
-		} catch (IOException e) {
-			this.assistant.log(e);
-		}
+        
+        handlePeriodLog();
+        
         this.currentPeriod.reset();
     }
 
@@ -179,17 +173,23 @@ public class WorkstationLockListening implements WindowProc
     protected void onMachineUnlocked(int sessionId)
     {
         System.out.println("Machine unlocked right now!");
-        this.currentPeriod.initEnd();
-        this.currentPeriod.initDuration();
         this.currentPeriod.setType(Period.PeriodType.PAUSE);
+        
+        handlePeriodLog();
+        
+        this.currentPeriod.reset();
+    }
+
+	private void handlePeriodLog() {
+		this.currentPeriod.initEnd();
+        this.currentPeriod.initDuration();
         this.currentPeriod.setCurrentTask(this.assistant.getCurrentTask());
         System.out.println(this.currentPeriod);
+        this.assistant.log(this.currentPeriod);
         try {
-			this.timeSheetWriter.write(this.currentPeriod.toString());
+        	writer.log(this.currentPeriod);
 		} catch (IOException e) {
 			this.assistant.log(e);
 		}
-        this.assistant.log(this.currentPeriod);
-        this.currentPeriod.reset();
-    }
+	}
 }
