@@ -1,8 +1,5 @@
 package is.timesheet;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 
 import com.sun.jna.WString;
@@ -19,7 +16,7 @@ import com.sun.jna.platform.win32.WinUser.WNDCLASSEX;
 import com.sun.jna.platform.win32.WinUser.WindowProc;
 import com.sun.jna.platform.win32.Wtsapi32;
 
-import is.timesheet.assistant.Assistant;
+import is.timesheet.assistant.AssistantGUI;
 import is.timesheet.assistant.data.Period;
 import is.timesheet.assistant.data.TimesheetWriter;
 
@@ -31,19 +28,23 @@ import is.timesheet.assistant.data.TimesheetWriter;
 public class WorkstationLockListening implements WindowProc
 {
 	
+	/** The current period. */
 	private Period currentPeriod = new Period();
 	
-	private Assistant assistant;
+	/** The GUI. */
+	private AssistantGUI assistant;
 
+	/** The writer. */
 	private TimesheetWriter writer;
 
     /**
      * Instantiates a new win32 window test.
-     * @param assistant 
-     * @param writer 
-     * @throws IOException 
+     *
+     * @param assistant the assistant
+     * @param writer the writer
+     * @throws IOException Signals that an I/O exception has occurred.
      */
-    public WorkstationLockListening(Assistant assistant, TimesheetWriter writer) throws IOException
+    public WorkstationLockListening(AssistantGUI assistant, TimesheetWriter writer) throws IOException
     {
     	this.assistant = assistant;
     	this.writer = writer;
@@ -180,6 +181,9 @@ public class WorkstationLockListening implements WindowProc
         this.currentPeriod.reset();
     }
 
+	/**
+	 * Handle period log.
+	 */
 	private void handlePeriodLog() {
 		this.currentPeriod.initEnd();
         this.currentPeriod.initDuration();
