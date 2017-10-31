@@ -9,6 +9,7 @@ import java.awt.event.KeyListener;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
@@ -82,7 +83,8 @@ public class AssistantGUI extends JFrame {
 		
 		mainPanel.add(inputPanel, BorderLayout.PAGE_START);
 		console = new JTextArea();
-		mainPanel.add(console, BorderLayout.CENTER);
+		JScrollPane consolePane = new JScrollPane(console);
+		mainPanel.add(consolePane, BorderLayout.CENTER);
 		
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
