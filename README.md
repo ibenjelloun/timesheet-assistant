@@ -1,2 +1,2 @@
 # timesheet-assistant
-A tool to help loging for the timesheet
+A tool to help logging timesheet
